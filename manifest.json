@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Web Timer Tasks",
+  "version": "2.0",
+  "description": "单次或循环定时打开网页，后台访问，刷新标签页",
+  "permissions": ["storage", "tabs", "alarms"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

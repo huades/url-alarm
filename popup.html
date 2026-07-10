@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>自动任务管理</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+<div class="theme-toggle">
+  <span>Web Timer Tasks</span>
+  <button id="themeToggle" type="button" aria-label="切换主题" title="跟随系统 / 浅色 / 深色">AUTO</button>
+</div>
+
+<div class="task-search">
+  <input id="taskSearch" type="text" placeholder="搜索任务（网址 / 类型 / 间隔）" aria-label="搜索任务" />
+  <button id="clearSearchBtn" class="clear-search-btn" type="button" aria-label="清空搜索" title="清空搜索">×</button>
+</div>
+
+<div class="no-search-results" id="noSearchResults" role="button" tabindex="0" aria-live="polite" title="点击清空搜索" hidden>未找到匹配任务</div>
+
+<details class="section fold-section" data-task-type="once">
+  <summary class="fold-summary"><h2>🎯 单次定时打开网页</h2></summary>
+  <div class="fold-content">
+    <input id="once-url" type="text" placeholder="网址，如 https://example.com" />
+    <div class="inline-input-row">
+      <input id="once-date" type="date" aria-label="打开日期" />
+      <input id="once-time" type="time" aria-label="打开时间" />
+    </div>
+    <button id="addOnceTask" class="add-btn" title="添加单次打开任务" aria-label="添加单次打开任务">＋ 添加</button>
+    <div id="onceTaskList"></div>
+  </div>
+</details>
+
+<details class="section fold-section" data-task-type="open">
+  <summary class="fold-summary"><h2>📅 每隔N天打开网页</h2></summary>
+  <div class="fold-content">
+    <input id="url" type="text" placeholder="网址，如 https://example.com" />
+    <input id="interval" type="number" min="1" placeholder="间隔天数" />
+    <button id="addTask" class="add-btn" title="添加任务" aria-label="添加任务">＋ 添加</button>
+    <div id="taskList"></div>
+  </div>
+</details>
+
+<details class="section fold-section" data-task-type="hourly">
+  <summary class="fold-summary"><h2>⏰ 每隔N小时打开网页</h2></summary>
+  <div class="fold-content">
+    <input id="hourly-url" type="text" placeholder="网址，如 https://example.com" />
+    <div class="inline-input-row">
+      <input id="hourly-interval" type="number" min="1" placeholder="间隔小时数" />
+      <span class="unit-label">小时</span>
+    </div>
+    <button id="addHourlyTask" class="add-btn" title="添加每N小时打开任务" aria-label="添加每N小时打开任务">＋ 添加</button>
+    <div id="hourlyTaskList"></div>
+  </div>
+</details>
+
+<details class="section fold-section" data-task-type="bg">
+  <summary class="fold-summary"><h2>🕒 每隔N分钟后台访问网址</h2></summary>
+  <div class="fold-content">
+    <input id="bg-url" type="text" placeholder="网址，如 https://example.com" />
+    <input id="bg-interval" type="number" min="1" placeholder="间隔分钟" />
+    <button id="addBgTask" class="add-btn" title="添加后台访问任务" aria-label="添加后台访问任务">＋ 添加</button>
+    <div id="bgTaskList"></div>
+  </div>
+</details>
+
+<details class="section fold-section" data-task-type="refresh">
+  <summary class="fold-summary"><h2>🔁 定时刷新标签页（地址前缀）</h2></summary>
+  <div class="fold-content">
+    <input id="refresh-url" type="text" placeholder="标签页地址前缀，如 https://example.com/dashboard" />
+    <input id="refresh-interval" type="number" min="1" placeholder="间隔分钟" />
+    <button id="addRefreshTask" class="add-btn" title="添加刷新任务" aria-label="添加刷新任务">＋ 添加</button>
+    <div id="refreshTaskList"></div>
+  </div>
+</details>
+
+<div class="task-transfer">
+  <button id="exportTasksBtn" class="export-btn" type="button">📤 导出任务</button>
+  <button id="importTasksBtn" class="import-btn" type="button">📥 导入任务</button>
+  <input id="importTasksFile" type="file" accept="application/json" style="display:none" />
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
+
