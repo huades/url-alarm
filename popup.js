@@ -431,7 +431,37 @@ document.addEventListener('DOMContentLoaded', () => {
     row.appendChild(unit);
   }
 
+  function appendUrlEditor(editorBlock, task, type) {
+    editorBlock.appendChild(createEditorLabel(type === 'refresh' ? '修改地址前缀' : '修改网址'));
+    const urlRow = createEditorRow();
+    urlRow.appendChild(createTypedInput(`${type}-url-input input-url`, 'text', task.url || ''));
+    editorBlock.appendChild(urlRow);
+  }
+
+  function readEditedUrl(container, type) {
+    const urlInput = container ? container.querySelector(`.${type}-url-input`) : null;
+    return urlInput ? urlInput.value.trim() : '';
+  }
+
+  function validateEditedUrl(url, type) {
+    if (type === 'refresh') {
+      if (!url) {
+        alert('请输入有效的网址前缀');
+        return false;
+      }
+      return true;
+    }
+
+    if (!isValidHttpUrl(url)) {
+      alert('请输入有效的网址（以 http:// 或 https:// 开头）');
+      return false;
+    }
+
+    return true;
+  }
+
   function appendOnceEditor(editorBlock, task, type, index) {
+    appendUrlEditor(editorBlock, task, type);
     editorBlock.appendChild(createEditorLabel('修改打开时间'));
     const timeRow = createEditorRow();
     timeRow.appendChild(createTypedInput('once-date-input input-date', 'date', formatDateLocal(task.nextTime)));
@@ -441,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function appendOpenEditor(editorBlock, task, type, index) {
+    appendUrlEditor(editorBlock, task, type);
     editorBlock.appendChild(createEditorLabel('修改间隔'));
     const intervalRow = createEditorRow();
     intervalRow.appendChild(createNumberInput('open-interval-input input-interval', task.interval));
@@ -456,6 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function appendHourlyEditor(editorBlock, task, type, index) {
+    appendUrlEditor(editorBlock, task, type);
     editorBlock.appendChild(createEditorLabel('修改间隔'));
     const intervalRow = createEditorRow();
     intervalRow.appendChild(createNumberInput('hourly-interval-input input-hour', task.interval));
@@ -471,6 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function appendMinuteEditor(editorBlock, task, type, index) {
+    appendUrlEditor(editorBlock, task, type);
     editorBlock.appendChild(createEditorLabel('修改间隔'));
     const intervalRow = createEditorRow();
     intervalRow.appendChild(createNumberInput('minute-interval-input input-minute', task.interval));
@@ -614,9 +647,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const container = button.closest('.task');
       const dateInput = container ? container.querySelector('.once-date-input') : null;
       const timeInput = container ? container.querySelector('.once-time-input') : null;
+      const url = readEditedUrl(container, type);
       const nextDate = dateInput ? dateInput.value : '';
       const nextTimeText = timeInput ? timeInput.value : '';
 
+      if (!validateEditedUrl(url, type)) {
+        return;
+      }
       if (!nextDate) {
         alert('请选择打开日期');
         return;
@@ -641,6 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const task = onceTasks[index];
         if (!task) return;
 
+        task.url = url;
         task.nextTime = nextTime;
         onceTasks[index] = task;
         chrome.storage.local.set({ onceTasks }, () => {
@@ -656,9 +694,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const dateInput = container ? container.querySelector('.open-date-input') : null;
       const timeInput = container ? container.querySelector('.open-time-input') : null;
       const intervalInput = container ? container.querySelector('.open-interval-input') : null;
+      const url = readEditedUrl(container, type);
       const openDate = dateInput ? dateInput.value : '';
       const openTime = timeInput ? timeInput.value : '';
       const intervalValue = intervalInput ? parsePositiveInteger(intervalInput.value) : NaN;
+      if (!validateEditedUrl(url, type)) {
+        return;
+      }
       if (!openDate) {
         alert('请选择打开日期');
         return;
@@ -683,6 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
+        task.url = url;
         task.interval = intervalValue;
         task.openTime = openTime;
         task.nextTime = nextTime;
@@ -700,10 +743,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const intervalInput = container ? container.querySelector('.hourly-interval-input') : null;
       const dateInput = container ? container.querySelector('.hourly-date-input') : null;
       const timeInput = container ? container.querySelector('.hourly-time-input') : null;
+      const url = readEditedUrl(container, type);
       const intervalValue = intervalInput ? parsePositiveInteger(intervalInput.value) : NaN;
       const nextDate = dateInput ? dateInput.value : '';
       const nextTimeText = timeInput ? timeInput.value : '';
 
+      if (!validateEditedUrl(url, type)) {
+        return;
+      }
       if (Number.isNaN(intervalValue)) {
         alert('请输入有效的间隔小时数');
         return;
@@ -729,6 +776,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const task = tasks[index];
         if (!task) return;
 
+        task.url = url;
         task.interval = intervalValue;
         task.nextTime = nextTime;
         tasks[index] = task;
@@ -743,7 +791,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (button.classList.contains('save-minute-btn')) {
       const container = button.closest('.task');
       const intervalInput = container ? container.querySelector('.minute-interval-input') : null;
+      const url = readEditedUrl(container, type);
       const intervalValue = intervalInput ? parsePositiveInteger(intervalInput.value) : NaN;
+      if (!validateEditedUrl(url, type)) {
+        return;
+      }
       if (Number.isNaN(intervalValue)) {
         alert('请输入有效的间隔分钟');
         return;
@@ -755,6 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const task = tasks[index];
         if (!task) return;
 
+        task.url = url;
         task.interval = intervalValue;
         task.nextTime = Date.now() + intervalValue * 60 * 1000;
         tasks[index] = task;

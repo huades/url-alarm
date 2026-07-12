@@ -13,7 +13,7 @@ A lightweight Chrome extension for scheduling URL tasks. It can open pages once 
 - **Every N hours**: open a URL at an hourly interval.
 - **Background visits**: open a minimized popup window for a URL and close it automatically.
 - **Scheduled tab refresh**: refresh tabs whose URL starts with a configured prefix.
-- **Editable tasks**: update intervals and next execution times from the popup.
+- **Editable tasks**: update URLs, URL prefixes, intervals, and next execution times from the popup.
 - **Task search**: filter tasks by URL, type, interval, or next execution time.
 - **Theme switcher**: light, dark, or system theme.
 - **Run now**: trigger a task immediately.

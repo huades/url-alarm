@@ -319,6 +319,9 @@
   .task-edit-row .input-hour {
     flex: 0 0 58px;
   }
+  .task-edit-row .input-url {
+    flex: 1 1 100%;
+  }
   .task-edit-row .interval-unit {
     flex: 0 0 auto;
     font-size: 14px;
