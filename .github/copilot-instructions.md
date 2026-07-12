@@ -4,10 +4,10 @@ This repository is a Manifest V3 Chrome extension for scheduling URL tasks.
 
 ## Main Files
 - `manifest.json`: Chrome extension manifest.
-- `background.js`: Service worker. Schedules `chrome.alarms`, executes tasks, and migrates old tasks to stable ids.
-- `popup.html`: Popup markup.
-- `popup.css`: Popup styles.
-- `popup.js`: Popup UI, storage CRUD, import/export, search, and task editing.
+- `src/background/background.js`: Service worker. Schedules `chrome.alarms`, executes tasks, and migrates old tasks to stable ids.
+- `src/popup/popup.html`: Popup markup.
+- `src/popup/popup.css`: Popup styles.
+- `src/popup/popup.js`: Popup UI, storage CRUD, import/export, search, and task editing.
 
 ## Task Types
 Task lists are stored in `chrome.storage.local` with these keys:
@@ -35,8 +35,8 @@ There is no build step. Load the folder directly in Chrome via "Load unpacked".
 Useful local checks:
 
 ```bash
-node --check background.js
-node --check popup.js
+node --check src/background/background.js
+node --check src/popup/popup.js
 ```
 
 Do not commit exported personal task backups. Files matching `web-timer-tasks-*.json` are ignored.

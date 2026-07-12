@@ -91,14 +91,14 @@
 
 ## 🧩 项目结构
 ```
-background.js   # 定时任务调度与执行
-popup.html      # 弹窗界面
-popup.css       # 弹窗样式
-popup.js        # 弹窗逻辑
-manifest.json   # 扩展配置
-icon16.png      # 图标
-icon48.png      # 图标
-icon128.png     # 图标
+manifest.json                    # 扩展配置
+src/background/background.js      # 定时任务调度与执行
+src/popup/popup.html              # 弹窗界面
+src/popup/popup.css               # 弹窗样式
+src/popup/popup.js                # 弹窗逻辑
+assets/icons/icon16.png           # 图标
+assets/icons/icon48.png           # 图标
+assets/icons/icon128.png          # 图标
 ```
 
 ---

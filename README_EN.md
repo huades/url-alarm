@@ -98,14 +98,14 @@ Older saved tasks without ids are migrated automatically.
 ## Project Structure
 
 ```text
-background.js   # Scheduling and task execution service worker
-popup.html      # Popup markup
-popup.css       # Popup styles
-popup.js        # Popup UI logic and storage operations
-manifest.json   # Chrome extension manifest
-icon16.png      # Extension icon
-icon48.png      # Extension icon
-icon128.png     # Extension icon
+manifest.json                    # Chrome extension manifest
+src/background/background.js      # Scheduling and task execution service worker
+src/popup/popup.html              # Popup markup
+src/popup/popup.css               # Popup styles
+src/popup/popup.js                # Popup UI logic and storage operations
+assets/icons/icon16.png           # Extension icon
+assets/icons/icon48.png           # Extension icon
+assets/icons/icon128.png          # Extension icon
 ```
 
 ---
@@ -117,8 +117,8 @@ There is no build step.
 Useful checks:
 
 ```bash
-node --check background.js
-node --check popup.js
+node --check src/background/background.js
+node --check src/popup/popup.js
 ```
 
 Do not commit exported personal task backups. Files matching `web-timer-tasks-*.json` are ignored.
