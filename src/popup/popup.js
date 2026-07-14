@@ -98,10 +98,38 @@ document.addEventListener('DOMContentLoaded', () => {
     return TASK_STORAGE_KEYS.reduce((total, key) => total + (tasks[key]?.length || 0), 0);
   }
 
+  const RECEIVER_UNAVAILABLE_PATTERN = /Receiving end does not exist|Could not establish connection/i;
+
+  function sendBackgroundMessage(message, callback, retries = 1) {
+    chrome.runtime.sendMessage(message, response => {
+      const errorMessage = chrome.runtime.lastError?.message || '';
+
+      if (errorMessage && retries > 0 && RECEIVER_UNAVAILABLE_PATTERN.test(errorMessage)) {
+        window.setTimeout(() => {
+          sendBackgroundMessage(message, callback, retries - 1);
+        }, 200);
+        return;
+      }
+
+      callback(response, errorMessage || null);
+    });
+  }
+
+  function getBackgroundErrorMessage(errorMessage) {
+    if (RECEIVER_UNAVAILABLE_PATTERN.test(errorMessage || '')) {
+      return '后台服务未连接。请打开 chrome://extensions，重新加载本扩展后再试。';
+    }
+
+    return errorMessage || '后台服务响应失败';
+  }
+
   function rescheduleAllAndReload(callback) {
-    chrome.runtime.sendMessage({ type: 'rescheduleAll' }, () => {
+    sendBackgroundMessage({ type: 'rescheduleAll' }, (response, errorMessage) => {
+      if (errorMessage || response?.ok === false) {
+        console.error('重新调度任务失败:', getBackgroundErrorMessage(errorMessage || response?.message));
+      }
       loadAllTaskLists();
-      if (callback) callback();
+      if (callback) callback(response, errorMessage);
     });
   }
 
@@ -841,14 +869,14 @@ document.addEventListener('DOMContentLoaded', () => {
     button.textContent = '执行中...';
     button.disabled = true;
 
-    chrome.runtime.sendMessage({ type: 'runNow', taskType: type, taskId: button.dataset.taskId || '', index }, response => {
-      if (chrome.runtime.lastError) {
+    sendBackgroundMessage({ type: 'runNow', taskType: type, taskId: button.dataset.taskId || '', index }, (response, errorMessage) => {
+      if (errorMessage) {
         button.textContent = '执行失败';
         window.setTimeout(() => {
           button.textContent = originalText;
           button.disabled = false;
         }, 1200);
-        alert(`执行失败：${chrome.runtime.lastError.message}`);
+        alert(`执行失败：${getBackgroundErrorMessage(errorMessage)}`);
         return;
       }
 
@@ -1137,6 +1165,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 初始加载所有任务列表
+  sendBackgroundMessage({ type: 'ping' }, (response, errorMessage) => {
+    if (errorMessage || response?.ok !== true) {
+      console.error('后台服务连接失败:', getBackgroundErrorMessage(errorMessage));
+    }
+  });
   updateClearSearchButtonState();
   setDefaultOnceDateTime();
   loadAllTaskLists();

@@ -145,9 +145,6 @@ async function rescheduleTasks(type) {
   }
 }
 
-// 初始化所有类型的定时器
-rescheduleAllTasks();
-
 function toNextOpenTime(openTime, intervalDays) {
   const [hourStr, minuteStr] = openTime.split(':');
   const hours = parseInt(hourStr, 10);
@@ -293,6 +290,11 @@ async function runTaskNow(type, taskRef) {
 
 // 立即执行任务 / 重新调度任务
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === 'ping') {
+    sendResponse({ ok: true, message: 'background-ready' });
+    return false;
+  }
+
   if (msg.type === 'rescheduleAll') {
     rescheduleAllTasks(error => {
       sendResponse(error
@@ -321,4 +323,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     });
 
   return true;
+});
+
+// Register all event listeners before starting asynchronous initialization.
+rescheduleAllTasks().catch(error => {
+  console.error('初始化定时任务失败:', error);
 });
